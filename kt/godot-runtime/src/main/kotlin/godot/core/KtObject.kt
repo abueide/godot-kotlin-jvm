@@ -18,6 +18,7 @@ abstract class KtObject : AutoCloseable {
             if (shouldInit.get()) {
                 // user types shouldn't override this method
                 rawPtr = __new()
+                TypeManager.objectInstancesMap[rawPtr] = this
 
                 // inheritance in Godot is faked, a script is attached to an Object allow
                 // the script to see all methods of the owning Object.
@@ -41,6 +42,7 @@ abstract class KtObject : AutoCloseable {
 
     fun free() {
         TransferContext.freeObject(this)
+        TypeManager.objectInstancesMap.remove(rawPtr)
     }
 
     final override fun close() {
@@ -54,6 +56,7 @@ abstract class KtObject : AutoCloseable {
             shouldInit.set(false)
             return constructor().also {
                 it.rawPtr = rawPtr
+                TypeManager.objectInstancesMap[rawPtr] = it
                 it._onInit()
             }
         }

@@ -26,6 +26,10 @@ class Invocation : Spatial() {
 	@RegisterProperty var z = 0.0f
 	@RegisterProperty var customName = "Idonthaveanyidea"
 
+    @RegisterProperty
+    var jvmInstanceId: Int = 0
+        get() = hashCode()
+
 	var invocation = OtherScript()
 
 	@RegisterProperty
@@ -81,6 +85,9 @@ class Invocation : Spatial() {
 	override fun _onDestroy() {
 		invocation.free()
 	}
+
+	@RegisterFunction
+	fun otherJvmInstanceId(invocation: Invocation) = invocation.jvmInstanceId
 
 	//Type cast checks
 	@RegisterFunction

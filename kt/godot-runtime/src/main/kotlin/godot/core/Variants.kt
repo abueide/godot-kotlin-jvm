@@ -224,11 +224,14 @@ class KtVariant {
 
     inline fun <reified T : KtObject> asObject(): T {
         val objectValue = data.objectValue
+        val ptr = objectValue.ptr
         val constructorIndex = objectValue.engineConstructorIndex
-        return KtObject.instantiateWith(
-                objectValue.ptr,
-                TypeManager.engineTypesConstructors[constructorIndex]
-        ) as T
+        return (
+                TypeManager.objectInstancesMap[ptr]
+                        ?: KtObject.instantiateWith(ptr,
+                                TypeManager.engineTypesConstructors[constructorIndex]
+                        )
+                ) as T
     }
 
     enum class Type {
