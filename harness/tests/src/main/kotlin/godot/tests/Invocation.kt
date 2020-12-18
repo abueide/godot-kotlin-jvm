@@ -45,7 +45,17 @@ enum class TestEnum {
 }
 
 @RegisterClass
-class Invocation : Spatial() {
+class Invocation() : Spatial() {
+
+    constructor(otherScript: OtherScript) : this() {
+        invocation = otherScript
+    }
+
+    constructor(name: String) : this() {
+        println("constructor: $name")
+        this.customName = name
+    }
+
     @RegisterProperty
     var x = 0
 

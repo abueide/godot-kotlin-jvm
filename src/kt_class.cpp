@@ -21,14 +21,24 @@ KtClass::~KtClass() {
 
 KtObject* KtClass::create_instance(jni::Env& env, const Variant** p_args, int p_arg_count, Object* p_owner) {
     jni::MethodId new_method { get_method_id(env, jni_methods.NEW) };
-    // TODO: send args
+
+    int constructor_index = 0;
+    for (int i = 0; i < p_arg_count; ++i) {
+        const Variant* variant = p_args[i];
+        constructor_index += static_cast<int>(variant->get_type()) * static_cast<int>(pow(100.0, i));
+    }
+    GDKotlin::get_instance().transfer_context->write_args(env, p_args, p_arg_count);
     jvalue args[3] = {
             jni::to_jni_arg(p_owner),
             jni::to_jni_arg(p_owner->get_instance_id()),
-            jni::to_jni_arg(p_arg_count)
+            jni::to_jni_arg(constructor_index)
     };
     jni::JObject j_kt_object{wrapped.call_object_method(env, new_method, args)};
+
+#ifdef DEBUG_ENABLED
     print_verbose(vformat("Instantiated an object of type %s", name));
+#endif
+
     return new KtObject(j_kt_object, class_loader, name);
 }
 

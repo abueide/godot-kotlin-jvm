@@ -21,11 +21,7 @@ StringName KotlinScript::get_instance_base_type() const {
 }
 
 ScriptInstance* KotlinScript::instance_create(Object* p_this) {
-    KtClass* kt_class { get_kotlin_class() };
-    print_verbose(vformat("Try to create %s instance.", kt_class->name));
-    jni::Env env = jni::Jvm::current_env();
-    KtObject *wrapped = kt_class->create_instance(env, nullptr, 0, p_this);
-    return memnew(KotlinInstance(wrapped, p_this, kt_class));
+    return _create_instance(p_this);
 }
 
 bool KotlinScript::instance_has(const Object* p_this) const {
@@ -125,6 +121,18 @@ KtClass* KotlinScript::get_kotlin_class() const {
     return GDKotlin::get_instance().find_class(get_path());
 }
 
+ScriptInstance* KotlinScript::_create_instance(Object* p_owner, const Variant** p_args, int p_argcount) {
+    jni::Env env{jni::Jvm::current_env()};
+    KtClass* kt_class { get_kotlin_class() };
+
+#ifdef DEBUG_ENABLED
+    print_verbose(vformat("Try to create %s instance.", kt_class->name));
+#endif
+
+    KtObject *wrapped = kt_class->create_instance(env, p_args, p_argcount, p_owner);
+    return memnew(KotlinInstance(wrapped, p_owner, kt_class));
+}
+
 Variant KotlinScript::_new(const Variant **p_args, int p_argcount, Variant::CallError &r_error) {
     r_error.error = Variant::CallError::CALL_OK;
 
@@ -136,7 +144,7 @@ Variant KotlinScript::_new(const Variant **p_args, int p_argcount, Variant::Call
         ref = REF(r);
     }
 
-    ScriptInstance* instance = instance_create(owner);
+    ScriptInstance* instance = _create_instance(owner, p_args, p_argcount);
     owner->set_script_instance(instance);
     if (!instance) {
         if (ref.is_null()) {

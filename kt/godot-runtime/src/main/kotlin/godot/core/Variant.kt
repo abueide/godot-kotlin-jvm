@@ -251,7 +251,6 @@ enum class VariantType(
                 } ?: KtObject.instantiateWith(
                         ptr,
                         buffer.long,
-                        isRef,
                         TypeManager.engineTypesConstructors[constructorIndex]
                 )
             },

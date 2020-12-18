@@ -9,6 +9,8 @@ class KotlinScript : public Script {
 private:
     String source;
     KtClass* get_kotlin_class() const;
+    ScriptInstance*
+    _create_instance(Object* p_owner, const Variant** p_args = nullptr, int p_argcount = 0);
 
 public:
     KotlinScript() = default;

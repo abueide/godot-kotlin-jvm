@@ -2,6 +2,7 @@ package godot.runtime
 
 import godot.core.*
 import godot.util.camelToSnakeCase
+import kotlin.math.pow
 import kotlin.reflect.*
 
 class KtPropertyInfoBuilderDsl {
@@ -43,10 +44,15 @@ class ClassBuilderDsl<T : KtObject>(
     private val signals = mutableMapOf<String, KtSignalInfo>()
 
     fun constructor(constructor: KtConstructor<T>) {
-        require(!constructors.containsKey(constructor.parameterCount)) {
-            "A constructor with ${constructor.parameterCount} argument(s) already exists."
+        var constructorIndex = 0
+        val parameterCount = constructor.parameterTypes.size
+        for (i in 0 until parameterCount) {
+            constructorIndex += constructor.parameterTypes[i].ordinal * 100.toDouble().pow(i).toInt()
         }
-        constructors[constructor.parameterCount] = constructor
+        require(!constructors.containsKey(constructorIndex)) {
+            "A constructor with $parameterCount and variant types ${constructor.parameterTypes} argument(s) already exists."
+        }
+        constructors[constructorIndex] = constructor
     }
 
     fun <P: Any> property(

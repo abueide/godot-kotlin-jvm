@@ -17,12 +17,12 @@ class KtClass<T : KtObject>(
     val signalInfos: Array<KtSignalInfo>
         get() = _signalInfos.values.toTypedArray()
 
-    fun new(rawPtr: VoidPtr, instanceId: Long, argCount: Int): T {
-        val constructor = constructors[argCount]
-        check(constructor != null) { "Constructor with $argCount parameter(s) not found." }
+    fun new(rawPtr: VoidPtr, instanceId: Long, constructorIndex: Int): T {
+        val constructor = constructors[constructorIndex]
+        check(constructor != null) { "Constructor with $constructorIndex parameter(s) not found." }
+        val args = TransferContext.readArguments(*constructor.parameterTypes)
         return KtObject.instantiateWith(rawPtr, instanceId) {
-            // todo send args
-            constructor()
+            constructor(*args.toTypedArray())
         }
     }
 }
