@@ -136,7 +136,7 @@ ScriptInstance* KotlinScript::_create_instance(Object* p_owner, const Variant** 
 Variant KotlinScript::_new(const Variant **p_args, int p_argcount, Variant::CallError &r_error) {
     r_error.error = Variant::CallError::CALL_OK;
 
-    Object *owner = ClassDB::instance(get_kotlin_class()->super_class);
+    Object* owner = ClassDB::instance(get_kotlin_class()->super_class);
 
     REF ref;
     auto* r = Object::cast_to<Reference>(owner);
@@ -144,7 +144,7 @@ Variant KotlinScript::_new(const Variant **p_args, int p_argcount, Variant::Call
         ref = REF(r);
     }
 
-    ScriptInstance* instance = _create_instance(owner, p_args, p_argcount);
+    ScriptInstance* instance{_create_instance(owner, p_args, p_argcount)};
     owner->set_script_instance(instance);
     if (!instance) {
         if (ref.is_null()) {
