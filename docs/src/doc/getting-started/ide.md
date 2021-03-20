@@ -1,4 +1,4 @@
-To get proper syntax highlighting, code completion and so on, you will need an external code editor. We do not, and will never support the built in one from Godot. Although you can of course use it for light editing if needed.  
+To get proper syntax highlighting, code completion and so on, you will need an external code editor. We currently do not have plans to support the built in one from Godot. Although you can of course use it for light editing if needed.  
 We strongly recommend using [IntelliJ IDEA](https://jetbrains.com/idea) (The community edition is free of charge) but other IDE's like Eclipse or VSCode will also work. But we only provide first class support for [IntelliJ IDEA](https://jetbrains.com/idea).  
 The easiest way to install and update it is via the [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/) app.
 
